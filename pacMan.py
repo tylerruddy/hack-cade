@@ -44,14 +44,14 @@ pacman = {"row": 1,
           "dir": "none",
           "score": 0,
           "cherry": False,
-          "lives": 3
+          "lives": 2
 }
 life = [24, 12]
 num_enemies = 4
 enemies = [{"row": 12, "col": 11, "alive": True, "dir": "None"},
            {"row": 12, "col": 12, "alive": True, "dir": "None"},
-           {"row": 12, "col": 13, "alive": True, "dir": "None"},
-           {"row": 12, "col": 14, "alive": True, "dir": "None"}
+           {"row": 13, "col": 2, "alive": True, "dir": "None"},
+           {"row": 13, "col": 24, "alive": True, "dir": "None"}
 ]
 
 def randomTurn(enemy):
@@ -109,7 +109,7 @@ def renderM():
     elif blockM[pacman["row"]][pacman["col"]] == 3:
         pacman["score"] += 10
         blockM[pacman["row"]][pacman["col"]] = 0
-        pacman["cherr"] = True
+        pacman["cherry"] = True
 
     for en in enemies:
         if en["alive"]:
