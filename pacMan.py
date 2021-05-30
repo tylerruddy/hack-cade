@@ -55,10 +55,13 @@ enemies = [{"row": 12, "col": 11, "dead": 0, "dir": "None", "weak": 0},
 ]
 
 def randomTurn(enemy):
+    # If ghost uses right portal
     if enemy["dir"] == "right" and enemy["col"] == len(blockM[0])-1:
         enemy["col"] = 0
+    # If ghost uses left portal
     elif enemy["dir"] == "left" and enemy["col"] == 0:
         enemy["col"] = len(blockM[0])-1
+    # Ghost move randomly
     else:
         deck = ""
         if enemy["col"] - 1 >= 0 and blockM[enemy["row"]][enemy["col"]-1] != 1 and enemy["dir"] != "right":
@@ -101,8 +104,10 @@ def renderM():
             elif blockM[i][j] == 3:
                 pygame.draw.circle(screen, (255, 255, 255), (j * square + square / 2, i * square + square / 2), square / 3)
     
+    # Draw pacman
     pygame.draw.circle(screen, (255, 255, 0), (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
 
+    # Count score and tic-tacs
     if blockM[pacman["row"]][pacman["col"]] == 2:
         pacman["score"] += 10
         pacman["tt"] += 1
@@ -114,21 +119,27 @@ def renderM():
         for en in enemies:
             en["weak"] = 5000
 
+    # Draw ghosts
     for en in enemies:
+        # Draw weakened ghosts
         if en["weak"] > 0:
-            if en["weak"] <= 1250:
+            # Increased ghost flashing
+            if en["weak"] <= 1350:
                 if en["weak"] % 200 >= 100:
                     pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
                 else:
                     pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+            # Base ghost flashing
             else:
-                if en["weak"] % 500 >= 100:
+                if en["weak"] % 600 >= 100:
                     pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
                 else:
                     pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+        # Draw normal ghosts
         else:
             pygame.draw.circle(screen, (255, 0, 0), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
 
+    # Draw lives
     if pacman["lives"] >= 1:
         pygame.draw.circle(screen, (255, 0, 0), (life[1] * square + square / 2, life[0] * square + square / 2), square / 3)
     if pacman["lives"] >= 2:
@@ -159,6 +170,7 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
+    # Pacman moves
     if count == 150:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
@@ -175,31 +187,37 @@ while running:
                 pacman["col"] = 0
             elif blockM[pacman["row"]][pacman["col"]+1] != 1:
                 pacman["col"] += 1
-                
+
+        # Win status
         if pacman["tt"] == 248:
             running = False
-    
+
+    # Ghosts move
     if count == 149:
         for en in enemies:
             randomTurn(en)
-                
+
+    
     for en in enemies:
         if en["weak"] > 0:
             en["weak"] -= 1
-            
+        # Ghost respawn
         if en["dead"] > 0:
             en["dead"] -= 1
             if en["dead"] == 0:
                 en["row"] = 12
                 en["col"] = 12
-                
+
+        # Pacman/Ghost collision
         if pacman["row"] == en["row"] and pacman["col"] == en["col"]:
+            # Pacman eats ghost
             if en["weak"] > 0:
                 en["row"] = 14
                 en["col"] = 12
                 en["dead"] = 2500
                 en["weak"] = 0
                 pacman["score"] += 200
+            # Pacman loses life/reset
             else:
                 enemies[0]["row"] = 12
                 enemies[0]["col"] = 11
