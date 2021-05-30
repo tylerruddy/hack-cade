@@ -150,7 +150,7 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    if count == 150:
+    if count == 125:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
             pacman["row"] -= 1
@@ -170,7 +170,7 @@ while running:
         if pacman["tt"] == 248:
             running = False
     
-    if count == 149:
+    if count == 124:
         for en in enemies:
             randomTurn(en)
                 
