@@ -48,42 +48,43 @@ pacman = {"row": 1,
 }
 life = [24, 12]
 num_enemies = 4
-enemies = [{"row": 12, "col": 12, "alive": True, "dir": "None"},
+enemies = [{"row": 12, "col": 11, "alive": True, "dir": "None"},
            {"row": 12, "col": 12, "alive": True, "dir": "None"},
-           {"row": 12, "col": 12, "alive": True, "dir": "None"},
-           {"row": 12, "col": 12, "alive": True, "dir": "None"}
+           {"row": 12, "col": 13, "alive": True, "dir": "None"},
+           {"row": 12, "col": 14, "alive": True, "dir": "None"}
 ]
 
 def randomTurn(enemy):
-    deck = ""
-    if enemy["col"] - 1 >= 0 and blockM[enemy["row"]][enemy["col"]-1] != 1:
-        deck += "left "
-    if enemy["col"] + 1 < len(blockM[0]) and blockM[enemy["row"]][enemy["col"]+1] != 1:
-        deck += "right "
-    if enemy["row"] - 1 >= 0 and blockM[enemy["row"]-1][enemy["col"]] != 1:
-        deck += "up "
-    if enemy["row"] + 1 < len(blockM) and blockM[enemy["row"]+1][enemy["col"]] != 1:
-        deck += "down "
+    if enemy["dir"] == "right" and enemy["col"] == len(blockM[0])-1:
+        enemy["col"] = 0
+    elif enemy["dir"] == "left" and enemy["col"] == 0:
+        enemy["col"] = len(blockM[0])-1
+    else:
+        deck = ""
+        if enemy["col"] - 1 >= 0 and blockM[enemy["row"]][enemy["col"]-1] != 1 and enemy["dir"] != "right":
+            deck += "left "
+        if enemy["col"] + 1 < len(blockM[0]) and blockM[enemy["row"]][enemy["col"]+1] != 1 and enemy["dir"] != "left":
+            deck += "right "
+        if enemy["row"] - 1 >= 0 and blockM[enemy["row"]-1][enemy["col"]] != 1 and enemy["dir"] != "down":
+            deck += "up "
+        if enemy["row"] + 1 < len(blockM) and blockM[enemy["row"]+1][enemy["col"]] != 1 and enemy["dir"] != "up":
+            deck += "down "
 
-    deck = deck.split()
-    shuffle(deck)
-    enemy["dir"] = deck[0]
-    
-    if len(deck) == 2 and enemy["dir"] in deck:
-        deck[0] = enemy["dir"]
+        deck = deck.split()
+        shuffle(deck)
 
-    if deck[0] == "left":
-        enemy["col"] -= 1
-        enemy["dir"] = "left"
-    if deck[0] == "right":
-        enemy["col"] += 1
-        enemy["dir"] = "right"
-    if deck[0] == "up":
-        enemy["row"] -= 1
-        enemy["dir"] = "up"
-    if deck[0] == "down":
-        enemy["col"] += 1
-        enemy["dir"] = "down"
+        if deck[0] == "left":
+            enemy["col"] -= 1
+            enemy["dir"] = "left"
+        if deck[0] == "right":
+            enemy["col"] += 1
+            enemy["dir"] = "right"
+        if deck[0] == "up":
+            enemy["row"] -= 1
+            enemy["dir"] = "up"
+        if deck[0] == "down":
+            enemy["row"] += 1
+            enemy["dir"] = "down"
 
 def renderM():
     # Fill with black
@@ -144,7 +145,7 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    if count == 2000:
+    if count == 200:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
             pacman["row"] -= 1
@@ -160,7 +161,8 @@ while running:
                 pacman["col"] = 0
             elif blockM[pacman["row"]][pacman["col"]+1] != 1:
                 pacman["col"] += 1
-
+    
+    if count == 199:
         for en in enemies:
             if en["alive"]:
                 randomTurn(en)
