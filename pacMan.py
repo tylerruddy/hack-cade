@@ -8,7 +8,7 @@ pygame.init()
 square = 20
 blockM = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 0, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 2, 1, 2, 1],
     [1, 2, 1, 2, 3, 2, 2, 2, 1, 2, 1, 1, 0, 0, 1, 1, 2, 1, 2, 2, 2, 3, 2, 1, 2, 1],
     [1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1],
@@ -39,19 +39,19 @@ blockM = [
 (width, height) = (len(blockM) * square, len(blockM[0]) * square)
 screen = pygame.display.set_mode((width, height))
 pygame.display.flip()
-pacman = {"row": 1,
-          "col": 1,
+pacman = {"row": 7,
+          "col": 13,
           "dir": "none",
           "score": 0,
-          "cherry": False,
-          "lives": 2
+          "lives": 3,
+          "tt": 0
 }
 life = [24, 12]
 num_enemies = 4
-enemies = [{"row": 12, "col": 11, "alive": True, "dir": "None"},
-           {"row": 12, "col": 12, "alive": True, "dir": "None"},
-           {"row": 13, "col": 2, "alive": True, "dir": "None"},
-           {"row": 13, "col": 24, "alive": True, "dir": "None"}
+enemies = [{"row": 12, "col": 11, "dead": 0, "dir": "None", "weak": 0},
+           {"row": 12, "col": 12, "dead": 0, "dir": "None", "weak": 0},
+           {"row": 13, "col": 2, "dead": 0, "dir": "None", "weak": 0},
+           {"row": 13, "col": 24, "dead": 0, "dir": "None", "weak": 0}
 ]
 
 def randomTurn(enemy):
@@ -91,7 +91,7 @@ def renderM():
     screen.fill((0, 0, 0))
     # Wall == blue == 1
     # Tic-Tac == small white == 2
-    # Cherry == big white == 3
+    # Big white == 3
     for i in range(len(blockM)):
         for j in range(len(blockM[0])):
             if blockM[i][j] == 1:
@@ -104,15 +104,20 @@ def renderM():
     pygame.draw.circle(screen, (255, 255, 0), (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
 
     if blockM[pacman["row"]][pacman["col"]] == 2:
-        pacman["score"] += 1
+        pacman["score"] += 10
+        pacman["tt"] += 1
         blockM[pacman["row"]][pacman["col"]] = 0
     elif blockM[pacman["row"]][pacman["col"]] == 3:
-        pacman["score"] += 10
+        pacman["score"] += 100
+        pacman["tt"] += 1
         blockM[pacman["row"]][pacman["col"]] = 0
-        pacman["cherry"] = True
+        for en in enemies:
+            en["weak"] = 5000
 
     for en in enemies:
-        if en["alive"]:
+        if en["weak"] > 0:
+            pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+        else:
             pygame.draw.circle(screen, (255, 0, 0), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
 
     if pacman["lives"] >= 1:
@@ -145,7 +150,7 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    if count == 200:
+    if count == 150:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
             pacman["row"] -= 1
@@ -161,19 +166,53 @@ while running:
                 pacman["col"] = 0
             elif blockM[pacman["row"]][pacman["col"]+1] != 1:
                 pacman["col"] += 1
+                
+        if pacman["tt"] == 248:
+            running = False
     
-    if count == 199:
+    if count == 149:
         for en in enemies:
-            if en["alive"]:
-                randomTurn(en)
+            randomTurn(en)
+                
+    for en in enemies:
+        if en["weak"] > 0:
+            en["weak"] -= 1
             
-    # Fill the background with white
+        if en["dead"] > 0:
+            en["dead"] -= 1
+            if en["dead"] == 0:
+                en["row"] = 12
+                en["col"] = 12
+                
+        if pacman["row"] == en["row"] and pacman["col"] == en["col"]:
+            if en["weak"] > 0:
+                en["row"] = 14
+                en["col"] = 12
+                en["dead"] = 2500
+                en["weak"] = 0
+                pacman["score"] += 200
+            else:
+                enemies[0]["row"] = 12
+                enemies[0]["col"] = 11
+                enemies[1]["row"] = 12
+                enemies[1]["col"] = 12
+                enemies[2]["row"] = 13
+                enemies[2]["col"] = 2
+                enemies[3]["row"] = 13
+                enemies[3]["col"] = 24
+                
+                pacman["row"] = 7
+                pacman["col"] = 13
+                pacman["lives"] -= 1;
+                pacman["dir"] = None
+                if pacman["lives"] == 0:
+                    running = False
+                    # gameover screen
+            
+    # Fill the background with black
     screen.fill((0, 0, 0))
     count += 1
-    # Draw a solid blue circle in the center
-    # pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
 
-    # Flip the display
 
 # Done! Time to quit.
 print(pacman["score"])
