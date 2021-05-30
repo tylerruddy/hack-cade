@@ -116,7 +116,16 @@ def renderM():
 
     for en in enemies:
         if en["weak"] > 0:
-            pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+            if en["weak"] <= 1250:
+                if en["weak"] % 200 >= 100:
+                    pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                else:
+                    pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+            else:
+                if en["weak"] % 500 >= 100:
+                    pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                else:
+                    pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
         else:
             pygame.draw.circle(screen, (255, 0, 0), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
 
@@ -150,7 +159,7 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    if count == 125:
+    if count == 150:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
             pacman["row"] -= 1
@@ -170,7 +179,7 @@ while running:
         if pacman["tt"] == 248:
             running = False
     
-    if count == 124:
+    if count == 149:
         for en in enemies:
             randomTurn(en)
                 
