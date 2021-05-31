@@ -5,6 +5,13 @@ import pygame
 from random import shuffle
 pygame.init()
 
+Blue = (0, 0, 255)
+Black = (0, 0, 0)
+White = (255, 255, 255)
+Yellow = (255, 255, 0)
+Aqua = (0, 255, 255)
+Red = (255, 0, 0)
+
 square = 20
 blockM = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -98,14 +105,14 @@ def renderM():
     for i in range(len(blockM)):
         for j in range(len(blockM[0])):
             if blockM[i][j] == 1:
-                pygame.draw.rect(screen, (0, 0, 255), (j * square, i * square, square, square))
+                pygame.draw.rect(screen, Blue, (j * square, i * square, square, square))
             elif blockM[i][j] == 2:
-                pygame.draw.circle(screen, (255, 255, 255), (j * square + square / 2, i * square + square / 2), square / 6)
+                pygame.draw.circle(screen, White, (j * square + square / 2, i * square + square / 2), square / 6)
             elif blockM[i][j] == 3:
-                pygame.draw.circle(screen, (255, 255, 255), (j * square + square / 2, i * square + square / 2), square / 3)
+                pygame.draw.circle(screen, White, (j * square + square / 2, i * square + square / 2), square / 3)
     
     # Draw pacman
-    pygame.draw.circle(screen, (255, 255, 0), (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
+    pygame.draw.circle(screen, Yellow, (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
 
     # Count score and tic-tacs
     if blockM[pacman["row"]][pacman["col"]] == 2:
@@ -126,26 +133,26 @@ def renderM():
             # Increased ghost flashing
             if en["weak"] <= 1350:
                 if en["weak"] % 200 >= 100:
-                    pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                    pygame.draw.circle(screen, Aqua, (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
                 else:
-                    pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                    pygame.draw.circle(screen, White, (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
             # Base ghost flashing
             else:
                 if en["weak"] % 600 >= 100:
-                    pygame.draw.circle(screen, (0, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                    pygame.draw.circle(screen, Aqua, (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
                 else:
-                    pygame.draw.circle(screen, (255, 255, 255), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+                    pygame.draw.circle(screen, White, (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
         # Draw normal ghosts
         else:
-            pygame.draw.circle(screen, (255, 0, 0), (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
+            pygame.draw.circle(screen, Red, (en["col"] * square + square / 2, en["row"] * square + square / 2), square / 3)
 
     # Draw lives
     if pacman["lives"] >= 1:
-        pygame.draw.circle(screen, (255, 0, 0), (life[1] * square + square / 2, life[0] * square + square / 2), square / 3)
+        pygame.draw.circle(screen, Red, (life[1] * square + square / 2, life[0] * square + square / 2), square / 3)
     if pacman["lives"] >= 2:
-        pygame.draw.circle(screen, (255, 0, 0), ((life[1]+1) * square + square / 2, life[0] * square + square / 2), square / 3)
+        pygame.draw.circle(screen, Red, ((life[1]+1) * square + square / 2, life[0] * square + square / 2), square / 3)
     if pacman["lives"] == 3:
-        pygame.draw.circle(screen, (255, 0, 0), ((life[1]+2) * square + square / 2, life[0] * square + square / 2), square / 3)
+        pygame.draw.circle(screen, Red, ((life[1]+2) * square + square / 2, life[0] * square + square / 2), square / 3)
                 
     pygame.display.update()
 
