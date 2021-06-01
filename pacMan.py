@@ -53,7 +53,7 @@ pacman = {"row": 7,
           "lives": 3,
           "tt": 0
 }
-life = [24, 12]
+life = [24, 13]
 num_enemies = 4
 enemies = [{"row": 12, "col": 11, "dead": 0, "dir": "None", "weak": 0},
            {"row": 12, "col": 12, "dead": 0, "dir": "None", "weak": 0},
@@ -113,6 +113,16 @@ def renderM():
     
     # Draw pacman
     pygame.draw.circle(screen, Yellow, (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
+    
+    text = 'Lives:'
+    font = pygame.font.SysFont(None, 30)
+    img = font.render(text, True, Red)
+
+    rect = img.get_rect()
+    rect.topleft = (10*20, 24*20)
+    img = font.render(text, True, Red)
+    rect.size=img.get_size()
+    screen.blit(img, rect)
 
     # Count score and tic-tacs
     if blockM[pacman["row"]][pacman["col"]] == 2:
