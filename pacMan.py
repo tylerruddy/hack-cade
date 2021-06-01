@@ -61,6 +61,14 @@ enemies = [{"row": 12, "col": 11, "dead": 0, "dir": "None", "weak": 0},
            {"row": 13, "col": 24, "dead": 0, "dir": "None", "weak": 0}
 ]
 
+text = 'Lives:'
+font = pygame.font.SysFont(None, 30)
+img = font.render(text, True, Red)
+rect = img.get_rect()
+rect.topleft = (10*20, 24*20)
+img = font.render(text, True, Red)
+rect.size=img.get_size()
+
 def randomTurn(enemy):
     # If ghost uses right portal
     if enemy["dir"] == "right" and enemy["col"] == len(blockM[0])-1:
@@ -114,19 +122,12 @@ def renderM():
     # Draw pacman
     pygame.draw.circle(screen, Yellow, (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
     
-    text = 'Lives:'
     text1 = 'Score: ' + str(pacman["score"])
-    font = pygame.font.SysFont(None, 30)
-    img = font.render(text, True, Red)
     img1 = font.render(text1, True, White)
 
-    rect = img.get_rect()
-    rect.topleft = (10*20, 24*20)
     rect1 = img1.get_rect()
     rect1.topleft = (10*20, 18*20)
-    img = font.render(text, True, Red)
     img1 = font.render(text1, True, White)
-    rect.size=img.get_size()
     rect1.size = img1.get_size()
     screen.blit(img, rect)
     screen.blit(img1, rect1)
