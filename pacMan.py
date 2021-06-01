@@ -115,14 +115,21 @@ def renderM():
     pygame.draw.circle(screen, Yellow, (pacman["col"] * square + square / 2, pacman["row"] * square + square / 2), square / 3)
     
     text = 'Lives:'
+    text1 = 'Score: ' + str(pacman["score"])
     font = pygame.font.SysFont(None, 30)
     img = font.render(text, True, Red)
+    img1 = font.render(text1, True, White)
 
     rect = img.get_rect()
     rect.topleft = (10*20, 24*20)
+    rect1 = img1.get_rect()
+    rect1.topleft = (10*20, 18*20)
     img = font.render(text, True, Red)
+    img1 = font.render(text1, True, White)
     rect.size=img.get_size()
+    rect1.size = img1.get_size()
     screen.blit(img, rect)
+    screen.blit(img1, rect1)
 
     # Count score and tic-tacs
     if blockM[pacman["row"]][pacman["col"]] == 2:
@@ -188,7 +195,7 @@ while running:
                 running = False
 
     # Pacman moves
-    if count == 150:
+    if count == 130:
         count = 0
         if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
             pacman["row"] -= 1
@@ -210,7 +217,7 @@ while running:
             running = False
 
     # Ghosts move
-    if count == 149:
+    if count == 129:
         for en in enemies:
             randomTurn(en)
 
