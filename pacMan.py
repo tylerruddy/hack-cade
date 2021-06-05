@@ -44,6 +44,8 @@ blockM = [
 
 # Set up the drawing window
 (width, height) = (len(blockM) * square, len(blockM[0]) * square)
+running = True
+victory = False
 screen = pygame.display.set_mode((width, height))
 pygame.display.flip()
 pacman = {"row": 7,
@@ -131,6 +133,24 @@ def renderM():
     rect1.size = img1.get_size()
     screen.blit(img, rect)
     screen.blit(img1, rect1)
+    
+    if not running:
+        if victory:
+            text3 = 'Victory!'
+            img3 = font.render(text3, True, Yellow)
+            rect3 = img3.get_rect()
+            rect3.topleft = (10*20, 9*20)
+            img3 = font.render(text3, True, Yellow)
+            rect3.size = img3.get_size()
+            screen.blit(img3, rect3)
+        else:
+            text3 = 'Game Over!'
+            img3 = font.render(text3, True, Red)
+            rect3 = img3.get_rect()
+            rect3.topleft = (10*20, 9*20)
+            img3 = font.render(text3, True, Red)
+            rect3.size = img3.get_size()
+            screen.blit(img3, rect3)
 
     # Count score and tic-tacs
     if blockM[pacman["row"]][pacman["col"]] == 2:
@@ -175,7 +195,6 @@ def renderM():
     pygame.display.update()
 
 # Run until the user asks to quit
-running = True
 count = 0
 while running:
     renderM()
@@ -214,8 +233,10 @@ while running:
                 pacman["col"] += 1
 
         # Win status
-        if pacman["tt"] == 248:
+        if pacman["tt"] == 2:
+            victory = True
             running = False
+            break
 
     # Ghosts move
     if count == 129:
@@ -261,10 +282,18 @@ while running:
                     running = False
                     # gameover screen
             
-    # Fill the background with black
-    screen.fill((0, 0, 0))
     count += 1
 
+count = 0
+r2 = True
+while(r2):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            r2 = False
+    if count == 20:
+        renderM()
+        count = 0
+    count += 1
 
 # Done! Time to quit.
 print(pacman["score"])
