@@ -46,6 +46,7 @@ blockM = [
 (width, height) = (len(blockM) * square, len(blockM[0]) * square)
 running = True
 victory = False
+waiting = True
 screen = pygame.display.set_mode((width, height))
 pygame.display.flip()
 pacman = {"row": 7,
@@ -134,6 +135,15 @@ def renderM():
     screen.blit(img, rect)
     screen.blit(img1, rect1)
     
+    if waiting:
+        text3 = 'Press W to Begin!'
+        img3 = font.render(text3, True, Yellow)
+        rect3 = img3.get_rect()
+        rect3.topleft = (10*20, 9*20)
+        img3 = font.render(text3, True, Red)
+        rect3.size = img3.get_size()
+        screen.blit(img3, rect3)
+    
     if not running:
         if victory:
             text3 = 'Victory!'
@@ -205,6 +215,8 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 pacman["dir"] = "up"
+                if waiting:
+                    waiting = False
             elif event.key == pygame.K_d:
                 pacman["dir"] = "right"
             elif event.key == pygame.K_s:
@@ -214,75 +226,76 @@ while running:
             elif event.key == pygame.K_q:
                 running = False
 
-    # Pacman moves
-    if count == 130:
-        count = 0
-        if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
-            pacman["row"] -= 1
-        elif pacman["dir"] == "down" and blockM[pacman["row"]+1][pacman["col"]] != 1:
-            pacman["row"] += 1
-        elif pacman["dir"] == "left":
-            if pacman["col"] == 0:
-                pacman["col"] = len(blockM[0])-1
-            elif blockM[pacman["row"]][pacman["col"]-1] != 1:
-                pacman["col"] -= 1
-        elif pacman["dir"] == "right":
-            if pacman["col"] == len(blockM[0])-1:
-                pacman["col"] = 0
-            elif blockM[pacman["row"]][pacman["col"]+1] != 1:
-                pacman["col"] += 1
+    if not waiting:
+        # Pacman moves
+        if count == 130:
+            count = 0
+            if pacman["dir"] == "up" and blockM[pacman["row"]-1][pacman["col"]] != 1:
+                pacman["row"] -= 1
+            elif pacman["dir"] == "down" and blockM[pacman["row"]+1][pacman["col"]] != 1:
+                pacman["row"] += 1
+            elif pacman["dir"] == "left":
+                if pacman["col"] == 0:
+                    pacman["col"] = len(blockM[0])-1
+                elif blockM[pacman["row"]][pacman["col"]-1] != 1:
+                    pacman["col"] -= 1
+            elif pacman["dir"] == "right":
+                if pacman["col"] == len(blockM[0])-1:
+                    pacman["col"] = 0
+                elif blockM[pacman["row"]][pacman["col"]+1] != 1:
+                    pacman["col"] += 1
 
-        # Win status
-        if pacman["tt"] == 2:
-            victory = True
-            running = False
-            break
+            # Win status
+            if pacman["tt"] == 248:
+                victory = True
+                running = False
+                break
 
-    # Ghosts move
-    if count == 129:
+        # Ghosts move
+        if count == 129:
+            for en in enemies:
+                randomTurn(en)
+
+        
         for en in enemies:
-            randomTurn(en)
-
-    
-    for en in enemies:
-        if en["weak"] > 0:
-            en["weak"] -= 1
-        # Ghost respawn
-        if en["dead"] > 0:
-            en["dead"] -= 1
-            if en["dead"] == 0:
-                en["row"] = 12
-                en["col"] = 12
-
-        # Pacman/Ghost collision
-        if pacman["row"] == en["row"] and pacman["col"] == en["col"]:
-            # Pacman eats ghost
             if en["weak"] > 0:
-                en["row"] = 14
-                en["col"] = 12
-                en["dead"] = 2500
-                en["weak"] = 0
-                pacman["score"] += 200
-            # Pacman loses life/reset
-            else:
-                enemies[0]["row"] = 12
-                enemies[0]["col"] = 11
-                enemies[1]["row"] = 12
-                enemies[1]["col"] = 12
-                enemies[2]["row"] = 13
-                enemies[2]["col"] = 2
-                enemies[3]["row"] = 13
-                enemies[3]["col"] = 24
+                en["weak"] -= 1
+            # Ghost respawn
+            if en["dead"] > 0:
+                en["dead"] -= 1
+                if en["dead"] == 0:
+                    en["row"] = 12
+                    en["col"] = 12
+
+            # Pacman/Ghost collision
+            if pacman["row"] == en["row"] and pacman["col"] == en["col"]:
+                # Pacman eats ghost
+                if en["weak"] > 0:
+                    en["row"] = 14
+                    en["col"] = 12
+                    en["dead"] = 2500
+                    en["weak"] = 0
+                    pacman["score"] += 200
+                # Pacman loses life/reset
+                else:
+                    enemies[0]["row"] = 12
+                    enemies[0]["col"] = 11
+                    enemies[1]["row"] = 12
+                    enemies[1]["col"] = 12
+                    enemies[2]["row"] = 13
+                    enemies[2]["col"] = 2
+                    enemies[3]["row"] = 13
+                    enemies[3]["col"] = 24
+                    
+                    pacman["row"] = 7
+                    pacman["col"] = 13
+                    pacman["lives"] -= 1;
+                    pacman["dir"] = None
+                    if pacman["lives"] == 0:
+                        running = False
+                        # gameover screen
                 
-                pacman["row"] = 7
-                pacman["col"] = 13
-                pacman["lives"] -= 1;
-                pacman["dir"] = None
-                if pacman["lives"] == 0:
-                    running = False
-                    # gameover screen
-            
-    count += 1
+        count += 1
 
 count = 0
 r2 = True
