@@ -91,6 +91,7 @@ def randomTurn(enemy):
         if enemy["row"] + 1 < len(blockM) and blockM[enemy["row"]+1][enemy["col"]] != 1 and enemy["dir"] != "up":
             deck += "down "
 
+        # Pick random direction for ghost to move
         deck = deck.split()
         shuffle(deck)
 
